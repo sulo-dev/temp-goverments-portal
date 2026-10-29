@@ -19,7 +19,7 @@ import {
 import Link from "next/link";
 import AnimatedButton from "@/components/layout/AnimatedButton";
 
-const MotionLink = motion(Link);
+const MotionLink = motion.create(Link);
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +61,7 @@ export default function Home() {
           </span>
         </motion.div>
 
-        {/* Hero Headline (Futuristic Typography) */}
+        {/* Hero Headline */}
         <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black text-slate-900 tracking-tighter mb-8 leading-[1.1]">
           Satu Pintu Untuk Semua <br className="hidden md:block" />
           <span className="relative inline-block">
@@ -93,16 +93,20 @@ export default function Home() {
               className="w-full bg-transparent border-none outline-none text-slate-800 placeholder-slate-400 font-bold text-lg md:text-xl py-4 px-6 focus:ring-0"
             />
             
-            {/* ANIMATED BUTTON: DIUBAH MENJADI "LIHAT DETAIL" */}
+            {/* 
+                ✨ PERBAIKAN ANIMATED BUTTON V3.0 ✨
+                - Dibuat bersih tanpa span dan absolute div tambahan
+                - Menggunakan bg-slate-900/80 agar efek kaca dari V3.0 (backdrop-blur-3xl) berfungsi sempurna
+                - Memanfaatkan properti glowColor dan spotlightColor secara bawaan
+            */}
             <AnimatedButton 
               type="submit" 
-              className="bg-slate-900 text-white px-8 md:px-12 py-5 rounded-2xl font-extrabold text-lg shadow-[0_10px_20px_rgba(15,23,42,0.3)] hover:shadow-[0_15px_30px_rgba(250,77,9,0.4)] flex items-center gap-3 shrink-0 group/btn"
+              glowColor="from-neon-orange via-cyber-red to-orange-500"
+              spotlightColor="rgba(255, 255, 255, 0.25)"
+              className="bg-slate-900/80 text-white px-8 md:px-12 py-4 md:py-5 text-lg flex items-center shrink-0"
             >
-              <span className="relative z-10 flex items-center gap-2">
-                Cari Sekarang
-                <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-neon-orange to-cyber-red opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+              Lihat Detail
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </AnimatedButton>
 
           </form>

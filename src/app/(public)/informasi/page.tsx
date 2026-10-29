@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion, Variants } from "framer-motion";
 import { 
   Calendar, 
   MapPin, 
@@ -11,8 +15,31 @@ import {
   Sparkles
 } from "lucide-react";
 import { mockNews, mockAgenda } from "@/lib/dummy-data";
+import AnimatedButton from "@/components/layout/AnimatedButton";
+
+// Animasi Stagger untuk Parent (Container)
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+// Animasi untuk setiap Child (Kartu)
+const itemVariants : Variants = {
+  hidden: { opacity: 0, y: 30, filter: "blur(5px)" },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    filter: "blur(0px)",
+    transition: { type: "spring", stiffness: 300, damping: 24 }
+  }
+};
 
 export default function InformasiAgenda() {
+  const router = useRouter();
+
   return (
     <div className="relative min-h-screen bg-slate-50 overflow-hidden font-sans selection:bg-neon-orange/30">
       
@@ -31,47 +58,83 @@ export default function InformasiAgenda() {
         {/* =========================================
             HEADER SECTION
         ========================================= */}
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20 animate-fade-in-up">
-          {/* Floating 3D Badge */}
-          <div className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/60 backdrop-blur-xl border border-white shadow-[0_8px_20px_rgba(0,0,0,0.05)] text-slate-800 text-sm font-extrabold mb-8 hover:shadow-[0_10px_30px_rgba(59,130,246,0.15)] hover:-translate-y-1 transition-all duration-300 cursor-default relative overflow-hidden">
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20">
+          
+          {/* Floating 3D Badge (Framer Motion) */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/60 backdrop-blur-xl border border-white shadow-[0_8px_20px_rgba(0,0,0,0.05)] text-slate-800 text-sm font-extrabold mb-8 hover:shadow-[0_10px_30px_rgba(59,130,246,0.15)] cursor-default relative overflow-hidden"
+          >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
             <Sparkles size={16} className="text-blue-500" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">
               Kabar & Agenda Daerah
             </span>
-          </div>
+          </motion.div>
 
-          <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter leading-[1.1]">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter leading-[1.1]"
+          >
             Pusat <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-orange to-cyber-red">Informasi Resmi</span>
-          </h1>
+          </motion.h1>
           
-          <p className="text-slate-500 text-lg md:text-xl leading-relaxed font-medium">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-slate-500 text-lg md:text-xl leading-relaxed font-medium"
+          >
             Dapatkan berita terkini, pengumuman resmi, serta jadwal kegiatan pemerintahan daerah secara transparan dan selalu terbarui.
-          </p>
+          </motion.p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* =========================================
-              KOLOM KIRI: BERITA & PENGUMUMAN (8 KOLOM)
+              KOLOM KIRI: BERITA & PENGUMUMAN
           ========================================= */}
-          <div className="lg:col-span-8 space-y-8 animate-fade-in-up">
+          <div className="lg:col-span-8 space-y-8">
             
-            <div className="flex items-center justify-between mb-2 px-2">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center justify-between mb-2 px-2"
+            >
               <h2 className="text-3xl font-black text-slate-900 tracking-tight">Berita Terkini</h2>
-              <Link href="#" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/60 backdrop-blur-md border border-white shadow-sm text-sm font-black text-slate-700 hover:text-neon-orange hover:shadow-md transition-all group">
+              
+              {/* ✨ AnimatedButton: Lihat Semua ✨ */}
+              <AnimatedButton 
+                onClick={() => router.push("/informasi/berita")}
+                enableGlow={false} // Dimatikan agar tetap halus layaknya badge sekunder
+                className="bg-white/60 backdrop-blur-md text-slate-700 px-5 py-2.5 text-sm flex items-center gap-2"
+              >
                 Lihat Semua <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+              </AnimatedButton>
+            </motion.div>
 
-            <div className="space-y-6">
-              {mockNews.map((news, idx) => (
-                <div 
+            {/* Container Staggered List untuk Kartu Berita */}
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="space-y-6"
+            >
+              {mockNews.map((news) => (
+                <motion.div 
                   key={news.id} 
-                  className="bg-white/60 backdrop-blur-xl p-5 md:p-6 rounded-[2.5rem] border border-white hover:border-neon-orange/40 hover:shadow-[0_20px_50px_rgba(250,77,9,0.1)] hover:-translate-y-2 transition-all duration-500 group flex flex-col md:flex-row gap-6 lg:gap-8 cursor-pointer relative overflow-hidden"
-                  style={{ animationDelay: `${0.1 * idx}s` }}
+                  variants={itemVariants}
+                  whileHover={{ y: -8, scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="bg-white/60 backdrop-blur-xl p-5 md:p-6 rounded-[2.5rem] border border-white hover:border-neon-orange/40 hover:shadow-[0_20px_50px_rgba(250,77,9,0.1)] transition-all duration-300 group flex flex-col md:flex-row gap-6 lg:gap-8 cursor-pointer relative overflow-hidden"
+                  onClick={() => router.push(`/informasi/${news.id}`)}
                 >
-                  
                   {/* Efek Refleksi Kaca */}
                   <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/80 to-transparent opacity-60 pointer-events-none z-0" />
                   
@@ -79,7 +142,7 @@ export default function InformasiAgenda() {
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-neon-orange/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0" />
 
                   {/* Thumbnail Placeholder 3D */}
-                  <div className="w-full md:w-64 h-56 md:h-auto bg-slate-100 rounded-[1.5rem] shrink-0 overflow-hidden relative border-2 border-white shadow-inner group-hover:border-neon-orange/30 group-hover:shadow-[0_0_20px_rgba(250,77,9,0.15)] transition-all duration-500 z-10">
+                  <div className="w-full md:w-64 h-56 md:h-auto bg-slate-100 rounded-[1.5rem] shrink-0 overflow-hidden relative border-2 border-white shadow-inner group-hover:border-neon-orange/30 group-hover:shadow-[0_0_20px_rgba(250,77,9,0.15)] transition-all duration-500 z-10 flex items-center justify-center">
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-300 group-hover:scale-110 transition-transform duration-700">
                       <Newspaper size={48} className="mb-2 drop-shadow-sm" />
                     </div>
@@ -113,19 +176,23 @@ export default function InformasiAgenda() {
                       </span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* =========================================
-              KOLOM KANAN: AGENDA & CTA (4 KOLOM, STICKY)
+              KOLOM KANAN: AGENDA & CTA (STICKY)
           ========================================= */}
-          <div className="lg:col-span-4 sticky top-32 space-y-8 animate-fade-in-up" style={{ animationDelay: "150ms" }}>
+          <div className="lg:col-span-4 sticky top-32 space-y-8">
             
             {/* --- PANEL AGENDA (GLASS) --- */}
-            <div className="bg-white/60 backdrop-blur-2xl p-8 md:p-10 rounded-[3rem] border border-white shadow-[0_20px_50px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden group">
-              
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white/60 backdrop-blur-2xl p-8 md:p-10 rounded-[3rem] border border-white shadow-[0_20px_50px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden group"
+            >
               {/* Ornamen Glow */}
               <div className="absolute -top-20 -right-20 w-48 h-48 bg-neon-orange/20 rounded-full blur-[50px] pointer-events-none group-hover:bg-neon-orange/30 transition-colors duration-500" />
               <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/80 to-transparent opacity-80 pointer-events-none" />
@@ -172,16 +239,26 @@ export default function InformasiAgenda() {
                 ))}
               </div>
 
-              <Link 
-                href="#" 
-                className="mt-10 w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-2xl font-black transition-all shadow-[0_10px_25px_rgba(15,23,42,0.2)] hover:shadow-[0_15px_35px_rgba(15,23,42,0.3)] hover:-translate-y-1 group/btn"
-              >
-                Lihat Kalender Penuh <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+              {/* ✨ AnimatedButton: Lihat Kalender ✨ */}
+              <div className="mt-10">
+                <AnimatedButton 
+                  onClick={() => router.push("/informasi/agenda")}
+                  glowColor="from-slate-400 to-slate-600"
+                  spotlightColor="rgba(255,255,255,0.15)"
+                  className="w-full bg-slate-900/80 text-white py-4 flex items-center justify-center gap-2 text-base"
+                >
+                  Lihat Kalender Penuh <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </AnimatedButton>
+              </div>
+            </motion.div>
 
             {/* --- BANNER AJAKAN (DARK GLASS CTA) --- */}
-            <div className="bg-slate-900 rounded-[3rem] p-8 md:p-10 text-white shadow-[0_20px_50px_rgba(15,23,42,0.4)] relative overflow-hidden mt-8 border border-slate-800 group">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-slate-900 rounded-[3rem] p-8 md:p-10 text-white shadow-[0_20px_50px_rgba(15,23,42,0.4)] relative overflow-hidden mt-8 border border-slate-800 group"
+            >
               <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-cyber-red/30 rounded-full blur-[50px] pointer-events-none group-hover:bg-cyber-red/50 transition-colors duration-700" />
               <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.05] bg-repeat pointer-events-none" />
               
@@ -195,16 +272,16 @@ export default function InformasiAgenda() {
                   Sampaikan keluhan atau saran Anda terkait infrastruktur dan pelayanan publik melalui kanal pengaduan resmi secara <span className="text-white font-bold">aman dan anonim</span>.
                 </p>
                 
-                <Link 
-                  href="/pengaduan" 
-                  className="relative overflow-hidden w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyber-red to-neon-orange hover:from-neon-orange hover:to-cyber-red text-white text-sm font-black px-6 py-4 rounded-2xl transition-all shadow-[0_10px_25px_rgba(250,77,9,0.3)] hover:shadow-[0_15px_35px_rgba(250,77,9,0.5)] group/btn hover:-translate-y-1"
+                {/* ✨ AnimatedButton: Buat Pengaduan ✨ */}
+                <AnimatedButton 
+                  onClick={() => router.push("/pengaduan")}
+                  glowColor="from-cyber-red to-neon-orange"
+                  className="w-full bg-gradient-to-r from-cyber-red to-neon-orange text-white py-4 flex items-center justify-center gap-2 text-sm border-none shadow-[0_10px_25px_rgba(250,77,9,0.3)]"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Buat Pengaduan <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                  </span>
-                </Link>
+                  Buat Pengaduan <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </AnimatedButton>
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </div>

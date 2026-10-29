@@ -1,15 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion, type Variants } from "framer-motion";
+import AnimatedButton from "@/components/layout/AnimatedButton";
 import { 
   PenTool, 
   CheckCircle, 
   Activity, 
   Star, 
   TrendingUp, 
-  ArrowRight,
   BarChart3,
-  Award,
   Clock,
   ShieldCheck,
   CheckCircle2,
@@ -42,6 +43,7 @@ const pimpinanPendingTTE = [
 ];
 
 export default function BerandaPimpinan() {
+  const router = useRouter();
   const safePerfData = pimpinanPerformanceData || [];
   const maxApproved = safePerfData.length > 0 ? Math.max(...safePerfData.map(d => d.approved)) : 500;
 
@@ -56,13 +58,29 @@ export default function BerandaPimpinan() {
     }
   };
 
+  // --- Varian Animasi ---
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-8 md:space-y-10 animate-fade-in-up pb-12 font-sans selection:bg-amber-500/30">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-8 md:space-y-10 pb-12 font-sans selection:bg-amber-500/30"
+    >
       
       {/* =========================================
           1. HERO BANNER EKSEKUTIF (Deep Gold Glass)
       ========================================= */}
-      <div className="bg-slate-950 rounded-[3rem] p-8 md:p-14 relative overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-slate-800 flex flex-col xl:flex-row items-center justify-between gap-10">
+      <motion.div variants={itemVariants} className="bg-slate-950 rounded-[3rem] p-8 md:p-14 relative overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-slate-800 flex flex-col xl:flex-row items-center justify-between gap-10">
         
         {/* Ambient Gold & Emerald Orbs */}
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-[100px] pointer-events-none animate-pulse-slow mix-blend-screen" />
@@ -70,9 +88,12 @@ export default function BerandaPimpinan() {
         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.05] bg-repeat pointer-events-none" />
         
         <div className="relative z-10 xl:max-w-2xl w-full">
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black mb-8 backdrop-blur-md uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, type: "spring" }}
+            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black mb-8 backdrop-blur-md uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+          >
             <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" /> Sesi Eksekutif: Pimpinan / Kepala Dinas
-          </div>
+          </motion.div>
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tighter leading-[1.1]">
             Selamat Datang, <br className="hidden sm:block" />
@@ -86,33 +107,41 @@ export default function BerandaPimpinan() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Link href="/pimpinan/persetujuan" className="w-full sm:w-auto relative overflow-hidden group/btn flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4.5 rounded-2xl font-black transition-all shadow-[0_10px_30px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_40px_rgba(245,158,11,0.5)] hover:-translate-y-1">
-              <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 ease-in-out" />
-              <span className="relative z-10 flex items-center gap-2.5 text-lg"><PenTool size={22} /> Eksekusi TTE Masal</span>
-            </Link>
+            <AnimatedButton 
+              onClick={() => router.push('/pimpinan/persetujuan')}
+              glowColor="from-amber-500 to-orange-500"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4.5 rounded-2xl font-black text-lg shadow-[0_10px_30px_rgba(245,158,11,0.3)]"
+            >
+              <PenTool size={22} /> Eksekusi TTE Masal
+            </AnimatedButton>
           </div>
         </div>
 
         {/* Lencana Otoritas 3D */}
-        <div className="relative z-10 hidden xl:flex flex-col items-center justify-center p-1 bg-gradient-to-b from-amber-400/30 to-amber-600/5 rounded-full shadow-[0_0_50px_rgba(245,158,11,0.15)] shrink-0 group cursor-default">
+        <motion.div 
+          initial={{ opacity: 0, rotate: -15, scale: 0.8 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.4 }}
+          className="relative z-10 hidden xl:flex flex-col items-center justify-center p-1 bg-gradient-to-b from-amber-400/30 to-amber-600/5 rounded-full shadow-[0_0_50px_rgba(245,158,11,0.15)] shrink-0 group cursor-default"
+        >
            <div className="bg-slate-900 border border-amber-500/30 w-64 h-64 rounded-full flex flex-col items-center justify-center relative overflow-hidden group-hover:bg-slate-800 transition-colors duration-500">
              <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.2] bg-repeat" />
              <ShieldCheck size={72} className="text-amber-400 mb-4 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] relative z-10 group-hover:scale-110 transition-transform duration-500" strokeWidth={1.5} />
              <p className="text-white font-black text-xl text-center leading-tight tracking-tight relative z-10">Otoritas <br/> Penerbitan</p>
              <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest mt-3 bg-emerald-400/10 px-4 py-1.5 rounded-lg border border-emerald-400/20 relative z-10 shadow-sm backdrop-blur-md">Sistem Aman</p>
            </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* =========================================
           2. STATS GRID EKSEKUTIF (Ultra Glass Cards)
-      ========================================= */}
+      ======================================== */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {pimpinanStats.map((stat, idx) => (
-          <div 
+          <motion.div 
             key={idx} 
+            variants={itemVariants}
             className="bg-white/70 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(245,158,11,0.1)] hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden"
-            style={{ animationDelay: `${idx * 100}ms` }}
           >
             {/* Ambient Latar */}
             <div className={`absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-[50px] opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none ${stat.bg.replace('/50', '')}`} />
@@ -132,14 +161,14 @@ export default function BerandaPimpinan() {
               </h3>
               <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{stat.title}</p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* =========================================
           3. CHARTS & ACTION SECTION
       ========================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* --- Grafik Kinerja Persetujuan (Glass Capsule 3D) --- */}
         <div className="lg:col-span-2 bg-white/70 backdrop-blur-2xl p-8 md:p-10 rounded-[3rem] border border-white shadow-[0_15px_40px_rgba(0,0,0,0.04)] relative overflow-hidden flex flex-col">
@@ -164,7 +193,7 @@ export default function BerandaPimpinan() {
               ))}
             </div>
 
-            {/* Kolom Grafik Emas 3D */}
+            {/* Kolom Grafik Emas 3D Dinamis */}
             <div className="w-full flex justify-between items-end h-full pb-8 pl-12 relative z-10">
               {safePerfData.map((data, index) => (
                 <div key={index} className="flex flex-col items-center gap-4 group w-full cursor-pointer">
@@ -175,13 +204,15 @@ export default function BerandaPimpinan() {
                   
                   {/* Kapsul Latar Belakang Grafik */}
                   <div className="w-10 sm:w-16 bg-slate-100/80 rounded-t-2xl relative overflow-hidden h-full flex items-end group-hover:bg-slate-200/80 transition-colors border-x border-t border-white/50 shadow-inner">
-                    {/* Isi Bar (Gradien Emas Menyala) */}
-                    <div 
-                      className="w-full bg-gradient-to-t from-amber-500 to-yellow-400 rounded-t-xl group-hover:brightness-110 transition-all duration-700 ease-out shadow-[0_0_20px_rgba(245,158,11,0.3)] relative"
-                      style={{ height: `${(data.approved / (maxApproved || 500)) * 100}%` }}
+                    {/* Isi Bar Tumbuh Menggunakan Framer Motion */}
+                    <motion.div 
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(data.approved / (maxApproved || 500)) * 100}%` }}
+                      transition={{ duration: 1.2, delay: 0.6 + (index * 0.1), ease: "easeOut" }}
+                      className="w-full bg-gradient-to-t from-amber-500 to-yellow-400 rounded-t-xl group-hover:brightness-110 shadow-[0_0_20px_rgba(245,158,11,0.3)] relative"
                     >
                       <div className="absolute top-0 left-0 w-full h-1.5 bg-white/40 rounded-t-xl" />
-                    </div>
+                    </motion.div>
                   </div>
                   <span className="text-xs font-black text-slate-400 uppercase tracking-widest group-hover:text-amber-500 transition-colors">{data.month}</span>
                 </div>
@@ -201,7 +232,13 @@ export default function BerandaPimpinan() {
 
           <div className="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2 mb-6">
             {pimpinanPendingTTE.map((doc, idx) => (
-              <div key={idx} className="p-5 bg-white border border-slate-100 hover:border-amber-200 rounded-[1.5rem] transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-[0_10px_25px_rgba(245,158,11,0.15)] hover:scale-[1.02] relative overflow-hidden">
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 + (idx * 0.1), type: "spring", stiffness: 250 }}
+                className="p-5 bg-white border border-slate-100 hover:border-amber-200 rounded-[1.5rem] transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-[0_10px_25px_rgba(245,158,11,0.15)] hover:scale-[1.02] relative overflow-hidden"
+              >
                 <div className="absolute top-0 left-0 w-1 h-full bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                 
                 <div className="flex justify-between items-start mb-2.5">
@@ -220,16 +257,20 @@ export default function BerandaPimpinan() {
                      Tinjau <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                    </Link>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
-          <Link href="/pimpinan/persetujuan" className="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-black py-4.5 rounded-[1.25rem] flex items-center justify-center gap-2.5 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] hover:shadow-[0_15px_40px_rgba(15,23,42,0.3)] hover:-translate-y-1">
+          <AnimatedButton 
+            onClick={() => router.push('/pimpinan/persetujuan')}
+            enableGlow={false}
+            className="w-full bg-slate-900 text-white text-sm font-black py-4.5 rounded-[1.25rem] flex items-center justify-center gap-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.2)]"
+          >
             Lihat Semua Antrean TTE
-          </Link>
+          </AnimatedButton>
         </div>
 
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

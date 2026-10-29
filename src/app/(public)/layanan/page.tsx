@@ -1,25 +1,26 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, 
   Clock, 
   Building, 
   Filter, 
   ChevronRight, 
-  Tags, 
   Loader2,
   Sparkles,
   ArrowRight
 } from "lucide-react";
 import { dummyServices } from "@/lib/dummy-data";
+import AnimatedButton from "@/components/layout/AnimatedButton";
 
 // =========================================
 // KOMPONEN KONTEN UTAMA
 // =========================================
 function KatalogContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   
   const initialQuery = searchParams.get("q") || "";
@@ -44,31 +45,53 @@ function KatalogContent() {
   return (
     <div className="relative z-10 w-full">
       {/* --- HEADER SECTION --- */}
-      <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16 animate-fade-in-up pt-8">
+      <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16 pt-8">
         
-        {/* Floating 3D Badge */}
-        <div className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/60 backdrop-blur-xl border border-white shadow-[0_8px_20px_rgba(0,0,0,0.05)] text-slate-800 text-sm font-extrabold mb-8 hover:shadow-[0_10px_30px_rgba(250,77,9,0.15)] hover:-translate-y-1 transition-all duration-300 cursor-default relative overflow-hidden">
+        {/* Floating 3D Badge dengan Framer Motion */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+          className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/60 backdrop-blur-xl border border-white shadow-[0_8px_20px_rgba(0,0,0,0.05)] text-slate-800 text-sm font-extrabold mb-8 hover:shadow-[0_10px_30px_rgba(250,77,9,0.15)] cursor-default relative overflow-hidden"
+        >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
           <Sparkles size={16} className="text-neon-orange" />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-orange to-cyber-red">
             Katalog Digital Terpadu
           </span>
-        </div>
+        </motion.div>
 
-        <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter leading-[1.1]">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tighter leading-[1.1]"
+        >
           Eksplorasi <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-orange to-cyber-red">Layanan Publik</span>
-        </h1>
-        <p className="text-slate-500 text-lg md:text-xl leading-relaxed font-medium">
+        </motion.h1>
+        
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-500 text-lg md:text-xl leading-relaxed font-medium"
+        >
           Temukan informasi, persyaratan, dan ajukan permohonan untuk berbagai layanan pemerintahan secara instan dan transparan.
-        </p>
+        </motion.p>
       </div>
 
       {/* --- 3D SEARCH & FILTER BAR --- */}
-      <div className="w-full max-w-5xl mx-auto relative group z-30 mb-20 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="w-full max-w-5xl mx-auto relative group z-30 mb-20"
+      >
         {/* Outer Glow */}
         <div className="absolute -inset-1 bg-gradient-to-r from-neon-orange to-cyber-red rounded-[2.5rem] blur-xl opacity-10 group-focus-within:opacity-30 transition duration-500" />
         
-        <div className="relative bg-white/70 backdrop-blur-2xl border-2 border-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] rounded-[2rem] p-2 flex flex-col md:flex-row items-center gap-2">
+        <div className="relative bg-white/70 backdrop-blur-2xl border-2 border-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] rounded-[2rem] p-2 flex flex-col md:flex-row items-center gap-2 transition-transform duration-300 hover:scale-[1.01]">
           
           {/* Input Pencarian */}
           <div className="flex-1 relative flex items-center w-full">
@@ -90,7 +113,7 @@ function KatalogContent() {
             <select 
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-slate-50 md:bg-transparent border border-slate-200 md:border-none rounded-xl md:rounded-none py-5 pl-14 pr-10 text-slate-700 font-bold text-base appearance-none focus:outline-none cursor-pointer transition-colors"
+              className="w-full bg-slate-50 md:bg-transparent border border-slate-200 md:border-none rounded-xl md:rounded-none py-5 pl-14 pr-10 text-slate-700 font-bold text-base appearance-none focus:outline-none cursor-pointer transition-colors hover:text-neon-orange"
             >
               <option value="all">Semua Kategori</option>
               <option value="perizinan">Perizinan Berusaha</option>
@@ -106,77 +129,92 @@ function KatalogContent() {
           </div>
 
         </div>
-      </div>
+      </motion.div>
 
-      {/* --- GRID KARTU LAYANAN --- */}
-      {filteredServices.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-          {filteredServices.map((service, idx) => (
-            <div 
-              key={service.id} 
-              className="relative bg-white/60 backdrop-blur-xl border border-white p-6 md:p-8 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_rgba(250,77,9,0.15)] hover:-translate-y-3 transition-all duration-500 group overflow-hidden flex flex-col animate-fade-in-up"
-              style={{ animationDelay: `${0.05 * idx}s` }}
-            >
-              {/* Highlight Refleksi Kaca (Atas) */}
-              <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/80 to-transparent opacity-60 pointer-events-none z-0" />
-              
-              {/* Glow Kategori di Sudut (Merespon Hover) */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-neon-orange/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
+      {/* --- GRID KARTU LAYANAN (DENGAN ANIMATE PRESENCE & LAYOUT) --- */}
+      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+        <AnimatePresence mode="popLayout">
+          {filteredServices.length > 0 ? (
+            filteredServices.map((service) => (
+              <motion.div 
+                layout
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -20, filter: "blur(5px)" }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                whileHover={{ y: -8 }}
+                key={service.id} 
+                className="relative bg-white/60 backdrop-blur-xl border border-white p-6 md:p-8 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_rgba(250,77,9,0.15)] transition-shadow duration-500 group overflow-hidden flex flex-col"
+              >
+                {/* Highlight Refleksi Kaca (Atas) */}
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/80 to-transparent opacity-60 pointer-events-none z-0" />
+                
+                {/* Glow Kategori di Sudut */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-neon-orange/20 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
 
-              <div className="flex justify-between items-start mb-6 relative z-10">
-                <span className="bg-white/80 backdrop-blur-sm border border-slate-100 text-neon-orange text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm">
-                  {service.category}
-                </span>
-                <span className="flex items-center text-slate-500 font-bold text-xs gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">
-                  <Clock size={14} className="text-slate-400" /> {service.estimatedDays} Hari
-                </span>
-              </div>
-              
-              <h3 className="text-xl font-black text-slate-800 mb-3 group-hover:text-neon-orange transition-colors leading-snug relative z-10">
-                {service.name}
-              </h3>
-              
-              <p className="text-slate-500 text-sm mb-8 flex-grow line-clamp-3 leading-relaxed font-medium relative z-10">
-                {service.description}
-              </p>
-              
-              <div className="pt-6 border-t border-slate-200/50 flex flex-col gap-5 relative z-10 mt-auto">
-                <div className="flex items-start gap-3 text-sm text-slate-500 font-bold">
-                  <div className="p-2 rounded-xl bg-white shadow-sm border border-slate-100 shrink-0 group-hover:bg-neon-orange/10 group-hover:border-neon-orange/20 transition-colors">
-                    <Building size={16} className="text-slate-400 group-hover:text-neon-orange transition-colors" />
-                  </div>
-                  <span className="line-clamp-2 mt-1">{service.opd}</span>
+                <div className="flex justify-between items-start mb-6 relative z-10">
+                  <span className="bg-white/80 backdrop-blur-sm border border-slate-100 text-neon-orange text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm">
+                    {service.category}
+                  </span>
+                  <span className="flex items-center text-slate-500 font-bold text-xs gap-1.5 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-slate-100 shadow-sm">
+                    <Clock size={14} className="text-slate-400" /> {service.estimatedDays} Hari
+                  </span>
                 </div>
                 
-                <Link 
-                  href={`/layanan/${service.id}`}
-                  className="w-full flex items-center justify-between bg-slate-900 text-white px-2 py-2 pl-6 rounded-2xl hover:bg-gradient-to-r hover:from-cyber-red hover:to-neon-orange transition-all duration-300 font-extrabold shadow-md group/btn"
-                >
-                  <span className="text-sm tracking-wide">Lihat Detail</span>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover/btn:translate-x-1 transition-transform">
-                    <ArrowRight size={18} className="text-white" />
+                <h3 className="text-xl font-black text-slate-800 mb-3 group-hover:text-neon-orange transition-colors leading-snug relative z-10">
+                  {service.name}
+                </h3>
+                
+                <p className="text-slate-500 text-sm mb-8 flex-grow line-clamp-3 leading-relaxed font-medium relative z-10">
+                  {service.description}
+                </p>
+                
+                <div className="pt-6 border-t border-slate-200/50 flex flex-col gap-5 relative z-10 mt-auto">
+                  <div className="flex items-start gap-3 text-sm text-slate-500 font-bold">
+                    <div className="p-2 rounded-xl bg-white shadow-sm border border-slate-100 shrink-0 group-hover:bg-neon-orange/10 group-hover:border-neon-orange/20 transition-colors">
+                      <Building size={16} className="text-slate-400 group-hover:text-neon-orange transition-colors" />
+                    </div>
+                    <span className="line-clamp-2 mt-1">{service.opd}</span>
                   </div>
-                </Link>
+                  
+                  {/* ✨ PERBAIKAN ANIMATED BUTTON V3.0 DI SINI ✨ */}
+                  <AnimatedButton 
+                    type="button" 
+                    onClick={() => router.push(`/layanan/${service.id}`)}
+                    glowColor="from-neon-orange via-cyber-red to-orange-500"
+                    spotlightColor="rgba(255, 255, 255, 0.25)"
+                    className="w-full bg-slate-900/80 text-white py-3.5 text-sm flex items-center justify-center shrink-0"
+                  >
+                    Lihat Detail
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform ml-1" />
+                  </AnimatedButton>
+
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            /* --- EMPTY STATE 3D --- */
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+              className="col-span-full bg-white/60 backdrop-blur-2xl py-24 rounded-[3rem] border border-white text-center flex flex-col items-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] max-w-4xl mx-auto"
+            >
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-cyber-red/20 rounded-full blur-[30px] animate-pulse-slow" />
+                <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center text-cyber-red border-2 border-white shadow-xl relative z-10 rotate-3">
+                  <Search size={40} />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        /* --- EMPTY STATE 3D --- */
-        <div className="bg-white/60 backdrop-blur-2xl py-24 rounded-[3rem] border border-white text-center flex flex-col items-center shadow-[0_20px_50px_rgba(0,0,0,0.05)] max-w-4xl mx-auto animate-fade-in-up">
-          <div className="relative mb-8">
-            <div className="absolute inset-0 bg-cyber-red/20 rounded-full blur-[30px] animate-pulse-slow" />
-            <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center text-cyber-red border-2 border-white shadow-xl relative z-10 rotate-3">
-              <Search size={40} />
-            </div>
-          </div>
-          <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Oops! Tidak Ditemukan</h3>
-          <p className="text-slate-500 text-lg font-medium max-w-md leading-relaxed">
-            Kami tidak dapat menemukan layanan dengan kata kunci "<strong className="text-slate-800">{searchQuery}</strong>".<br />
-            Silakan coba kata kunci lain.
-          </p>
-        </div>
-      )}
+              <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Oops! Tidak Ditemukan</h3>
+              <p className="text-slate-500 text-lg font-medium max-w-md leading-relaxed">
+                Kami tidak dapat menemukan layanan dengan kata kunci "<strong className="text-slate-800">{searchQuery}</strong>".<br />
+                Silakan coba kata kunci atau kategori lain.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

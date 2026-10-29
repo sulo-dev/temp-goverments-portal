@@ -63,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="scroll-smooth">
+    <html lang="id" className="scroll-smooth" data-scroll-behavior="smooth">
       {/* 
         Penjelasan Body Classes:
         - plusJakarta.variable & .className: Menyuntikkan font ke seluruh aplikasi
