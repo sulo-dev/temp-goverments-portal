@@ -33,7 +33,7 @@ function NavLinks() {
               isActive ? "text-neon-orange" : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            {/* ✨ MAGIC TAB INDICATOR: Latar belakang putih yang meluncur mulus */}
+            {/* ✨ MAGIC TAB INDICATOR */}
             {isActive && (
               <motion.div 
                 layoutId="active-nav-pill"
@@ -42,14 +42,14 @@ function NavLinks() {
               />
             )}
             
-            {/* Hover Background (Hanya muncul jika tidak aktif) */}
+            {/* Hover Background */}
             {!isActive && (
               <div className="absolute inset-0 bg-white/50 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-full -z-10" />
             )}
             
             <span className="relative z-10">{link.name}</span>
             
-            {/* Glowing Dot Tambahan untuk kesan Futuristik */}
+            {/* Glowing Dot */}
             {isActive && (
               <motion.div 
                 layoutId="active-nav-dot"
@@ -64,15 +64,16 @@ function NavLinks() {
 }
 
 // =========================================
-// MAIN NAVBAR COMPONENT
+// NAVBAR CONTENT (TANPA AUTHENTICATION)
 // =========================================
-export default function Navbar() {
+function NavbarContent() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   const pathname = usePathname();
   const router = useRouter();
 
-  // Deteksi Scroll untuk efek Glassmorphism dinamis
+  // Deteksi Scroll
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -81,7 +82,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Tutup menu mobile jika route berubah
+  // Tutup menu jika route berubah
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
@@ -94,7 +95,7 @@ export default function Navbar() {
     { name: "Lacak Permohonan", path: "/lacak" },
   ];
 
-  // Variants untuk animasi Mobile Menu (Framer Motion)
+  // Variants Animasi Menu Samping (Mobile)
   const menuVariants: Variants = {
     closed: { x: "100%", transition: { type: "spring", stiffness: 400, damping: 30 } },
     open: { x: 0, transition: { type: "spring", stiffness: 400, damping: 30, staggerChildren: 0.05, delayChildren: 0.1 } }
@@ -129,23 +130,20 @@ export default function Navbar() {
 
             {/* Navigasi Tengah (Desktop) */}
             <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
-              <Suspense fallback={<div className="h-14 w-[400px] bg-white/50 animate-pulse rounded-full border border-white" />}>
-                <NavLinks />
-              </Suspense>
+              <NavLinks />
             </div>
 
-            {/* Aksi Kanan (Pencarian & Login) */}
-            <div className="flex items-center gap-3 sm:gap-4">
+            {/* Aksi Kanan (Pencarian & Login Statis) */}
+            <div className="flex items-center gap-3 sm:gap-4 relative">
               <button className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-neon-orange bg-white/50 backdrop-blur-md rounded-[1rem] transition-all shadow-sm border border-white hover:shadow-md hover:-translate-y-0.5 group">
                 <Search size={20} className="group-hover:scale-110 transition-transform" />
               </button>
               
-              {/* ✨ IMPLEMENTASI ANIMATED BUTTON V3.0 DI NAVBAR ✨ */}
               <div className="hidden sm:block">
                 <AnimatedButton 
                   onClick={() => router.push("/login")}
                   glowColor="from-cyber-red to-neon-orange"
-                  className="bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-black flex items-center gap-2"
+                  className="bg-slate-900 text-white px-6 py-3 rounded-[1rem] text-sm font-black flex items-center gap-2 shadow-[0_8px_20px_rgba(15,23,42,0.3)] hover:shadow-[0_10px_25px_rgba(15,23,42,0.4)]"
                 >
                   <UserCircle size={18} className="text-white/70 group-hover:text-white transition-colors" />
                   Masuk Portal
@@ -234,9 +232,12 @@ export default function Navbar() {
               </div>
 
               {/* Footer Mobile Menu (CTA) */}
-              <motion.div variants={itemVariants} className="p-6 border-t border-slate-100/50 bg-slate-50/50 mt-auto">
+              <motion.div variants={itemVariants} className="p-6 border-t border-slate-100/50 bg-slate-50/50 mt-auto flex flex-col gap-3">
                 <AnimatedButton 
-                  onClick={() => router.push("/login")}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push("/login");
+                  }}
                   className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3"
                 >
                   <UserCircle size={22} /> Masuk ke Portal
@@ -248,5 +249,16 @@ export default function Navbar() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+// =========================================
+// DEFAULT EXPORT DENGAN SUSPENSE BOUNDARY
+// =========================================
+export default function Navbar() {
+  return (
+    <Suspense fallback={<div className="h-24 w-full bg-transparent" />}>
+      <NavbarContent />
+    </Suspense>
   );
 }

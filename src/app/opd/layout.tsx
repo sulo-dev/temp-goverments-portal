@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,14 +20,15 @@ import {
   ChevronRight
 } from "lucide-react";
 
-export default function OpdLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// =========================================
+// KONTEN LAYOUT (Dipisahkan agar bisa dibungkus Suspense)
+// =========================================
+function OpdLayoutContent({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState({ date: "", time: "" });
   const [isClient, setIsClient] = useState(false);
+  
+  // Memanggil hook rute klien di sini akan aman selama dibungkus Suspense di luar
   const pathname = usePathname();
 
   // Mencegah Hydration Mismatch & Update Waktu Real-Time
@@ -252,7 +253,25 @@ export default function OpdLayout({
         </main>
         
       </div>
-
     </div>
+  );
+}
+
+// =========================================
+// DEFAULT EXPORT DENGAN BUNGKUSAN SUSPENSE
+// =========================================
+export default function OpdLayout({ children }: { children: React.ReactNode }) {
+  return (
+    // Fallback UI saat suspense sedang memuat komponen rute klien
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <div className="w-16 h-16 rounded-[1rem] bg-slate-200"></div>
+          <p className="text-slate-500 font-bold">Memuat Dashboard OPD...</p>
+        </div>
+      </div>
+    }>
+      <OpdLayoutContent>{children}</OpdLayoutContent>
+    </Suspense>
   );
 }

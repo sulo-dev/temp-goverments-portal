@@ -25,6 +25,8 @@ export const viewport: Viewport = {
 
 // 3. Metadata Dinamis & Enterprise SEO
 export const metadata: Metadata = {
+  // PENTING: Menambahkan metadataBase untuk menghilangkan warning saat build production
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: {
     template: "%s | Portal Satu Pintu", // Akan otomatis menjadi "Nama Halaman | Portal Satu Pintu"
     default: "Portal Satu Pintu Pemerintahan",
@@ -80,7 +82,7 @@ export default function RootLayout({
           overflow-x-hidden min-h-screen flex flex-col
         `}
       >
-        {/* Opsional: Tempatkan Provider Global di sini (Misal: Toaster, NextAuthProvider, ThemeProvider) */}
+        {/* Tidak ada Provider Auth di sini lagi. Langsung render children. */}
         {children}
       </body>
     </html>

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { 
   ShieldCheck, 
   User, 
-  Lock, 
   EyeOff, 
   Eye, 
   ArrowRight, 
@@ -17,7 +17,8 @@ import {
   Sparkles,
   AlertCircle,
   CheckCircle2,
-  LockKeyhole
+  LockKeyhole,
+  ArrowLeft
 } from "lucide-react";
 import AnimatedButton from "@/components/layout/AnimatedButton";
 
@@ -32,6 +33,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Optimasi: Melakukan prefetch pada rute agar perpindahan halaman terjadi seketika
+  useEffect(() => {
+    router.prefetch("/opd");
+    router.prefetch("/pimpinan");
+  }, [router]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +146,8 @@ export default function LoginPage() {
             {/* Glowing Logo */}
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-16 h-16 bg-white/5 backdrop-blur-md rounded-[1.25rem] flex items-center justify-center border border-white/10 mb-10 shadow-[0_0_30px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] transition-shadow duration-700"
+              className="w-16 h-16 bg-white/5 backdrop-blur-md rounded-[1.25rem] flex items-center justify-center border border-white/10 mb-10 shadow-[0_0_30px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] transition-shadow duration-700 cursor-pointer"
+              onClick={() => router.push("/")}
             >
               <ShieldCheck size={36} className="text-blue-400" />
             </motion.div>
@@ -171,7 +179,15 @@ export default function LoginPage() {
 
         {/* --- SISI KANAN: FORM LOGIN (WHITE GLASS) --- */}
         <div className="w-full md:w-7/12 bg-white/95 backdrop-blur-xl p-8 md:p-14 lg:p-16 flex flex-col justify-center relative">
-          <div className="max-w-md w-full mx-auto relative z-10">
+          
+          {/* Tombol Kembali (Untuk Tester/Warga) */}
+          <motion.div custom={0} variants={fadeUpVariants} initial="hidden" animate="visible" className="absolute top-6 right-6 md:top-8 md:right-8">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors bg-slate-100 hover:bg-slate-200 py-2 px-4 rounded-full">
+              <ArrowLeft size={14} /> Kembali ke Beranda
+            </Link>
+          </motion.div>
+
+          <div className="max-w-md w-full mx-auto relative z-10 mt-8 md:mt-0">
             
             <motion.div custom={1} variants={fadeUpVariants} initial="hidden" animate="visible" className="mb-10 text-center md:text-left">
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-3 flex items-center justify-center md:justify-start gap-3 tracking-tight">
@@ -363,7 +379,7 @@ export default function LoginPage() {
 
             <motion.div custom={6} variants={fadeUpVariants} initial="hidden" animate="visible" className="mt-12 pt-6 border-t border-slate-200 text-center">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                © {new Date().getFullYear()} Portal Satu Pintu. Hak Cipta Dilindungi.
+                © 2026 Portal Satu Pintu. Hak Cipta Dilindungi.
               </p>
             </motion.div>
             
